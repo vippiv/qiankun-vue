@@ -2,37 +2,32 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import './styles/base.css'
 
 
 // 导入乾坤函数
-import {
-  registerMicroApps,
-  setDefaultMountApp,
-  start
-} from "qiankun";
+import { registerMicroApps, setDefaultMountApp, start } from "qiankun"
 
 Vue.config.productionTip = false
 
-
-
 function genActiveRule(routerPrefix) {
-  return location => location.pathname.startsWith(routerPrefix);
+	return location => location.pathname.startsWith(routerPrefix);
 }
 
 let app = null;
 
 function render({ appContent, loading }) {
-  if (!app) {
-    app = new Vue({
-      router,
-      store,
-      render: h => h(App),
-    }).$mount('#app');
-    
-  } else {
-    store.commit('microApp/changeCenter', appContent);
-    store.commit('microApp/changeLoading', loading);
-  }
+	if (!app) {
+		app = new Vue({
+			router,
+			store,
+			render: h => h(App),
+		}).$mount('#app');
+		
+	} else {
+		store.commit('microApp/changeCenter', appContent);
+		store.commit('microApp/changeLoading', loading);
+	}
 
 }
 
@@ -40,47 +35,58 @@ function render({ appContent, loading }) {
 render({}) 
 
 let msg = {
-  data:'修炼爱情的辛酸,学会放好以前的渴望'
+	data:'修炼爱情的辛酸,学会放好以前的渴望'
+}
+
+let msg_lesson = {
+	data:'好好学习，天天向上'
 }
 
 let apps = [
-  {
-    name: 'linjunjie', 
-    entry: '//localhost:215', 
-    container:'#subView', 
-    // render:renderUtil.render, 
-    activeRule: genActiveRule('/star'),
-    props:msg
-  }
+	{
+		name: 'linjunjie', 
+		entry: '//localhost:215', 
+		container:'#subView', 
+		// render:renderUtil.render, 
+		activeRule: genActiveRule('/star'),
+		props: { // 主应用给微应用传递数据
+			msg,
+			store
+		}
+	}, {
+		name: 'lesson', 
+		entry: '//localhost:216', 
+		container:'#subView', 
+		// render:renderUtil.render, 
+		activeRule: genActiveRule('/lesson'),
+		props:msg_lesson
+	}
 ]
 
-
-   //注册的子应用 参数为数组
+//注册的子应用 参数为数组
 registerMicroApps(apps,{
-  beforeLoad: [
-    app => {
-      console.log(app)
-      console.log('[LifeCycle] before load %c%s', 'color: green;', app.name);
-    },
-  ],
-  beforeMount: [
-    app => {
-      console.log('[LifeCycle] before mount %c%s', 'color: green;', app.name);
-    },
-  ],
-  afterUnmount: [
-    app => {
-      console.log('[LifeCycle] after unmount %c%s', 'color: green;', app.name);
-    },
-  ],
+	// beforeLoad: [
+	// 	app => {
+	// 		console.log(app)
+	// 		console.log('[LifeCycle] before load %c%s', 'color: green;', app.name);
+	// 	},
+	// ],
+	// beforeMount: [
+	// 	app => {
+	// 		console.log('[LifeCycle] before mount %c%s', 'color: green;', app.name);
+	// 	},
+	// ],
+	// afterUnmount: [
+	// 	app => {
+	// 		console.log('[LifeCycle] after unmount %c%s', 'color: green;', app.name);
+	// 	},
+	// ],
 });
 
 
 setDefaultMountApp('/star/linjunjie')
 
-start({ 
-   sandbox :{strictStyleIsolation: true}
+start({
+	prefetch: 'all',
+	sandbox :{strictStyleIsolation: true}
 })
-
-
-

@@ -5,9 +5,10 @@ function resolve(dir) {
   return path.join(__dirname, dir);
 }
 
-const port = 215; // dev port
+const port = 216; // dev port
 
 module.exports = {
+ 
   outputDir: 'dist',
   assetsDir: 'static',
   filenameHashing: true,
